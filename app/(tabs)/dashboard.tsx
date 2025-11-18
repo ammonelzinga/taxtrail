@@ -5,6 +5,7 @@ import { Link } from 'expo-router';
 import { useFinanceStore } from '@/stores/useFinanceStore';
 import { Chart } from '@/components/Chart';
 import { estimateTaxes } from '@/services/taxes';
+import { Screen } from '@/components/Screen';
 
 export default function DashboardScreen() {
   const income = useFinanceStore((s) => s.income);
@@ -24,23 +25,29 @@ export default function DashboardScreen() {
   }, [income]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#0B0F14', padding: 16, gap: 12 }}>
-      <Text style={{ color: 'white', fontSize: 24, fontWeight: '700', marginBottom: 8 }}>Overview</Text>
-      <View style={{ flexDirection: 'row', gap: 12 }}>
-        <Card title="Total Income" value={`$${totalIncome.toFixed(2)}`} />
-        <Card title="Total Expenses" value={`$${totalExpenses.toFixed(2)}`} />
-      </View>
-      <View style={{ flexDirection: 'row', gap: 12 }}>
-        <Card title="Taxable Income" value={`$${taxableIncome.toFixed(2)}`} />
-        <Card title="Est. Quarterly" value={`$${estQuarterlyTaxes.toFixed(2)}`} />
-      </View>
-      <Card title="Monthly Income">
-        <Chart values={monthlyIncome} width={340} height={120} />
-      </Card>
+    <Screen>
+      <View style={{ gap: 12 }}>
+        <Text style={{ color: 'white', fontSize: 24, fontWeight: '700' }}>Overview</Text>
+        <View style={{ flexDirection: 'row', gap: 12 }}>
+          <Card title="Total Income" value={`$${totalIncome.toFixed(2)}`} />
+          <Card title="Total Expenses" value={`$${totalExpenses.toFixed(2)}`} />
+        </View>
+        <View style={{ flexDirection: 'row', gap: 12 }}>
+          <Card title="Taxable Income" value={`$${taxableIncome.toFixed(2)}`} />
+          <Card title="Est. Quarterly" value={`$${estQuarterlyTaxes.toFixed(2)}`} />
+        </View>
+        <Card title="Monthly Income">
+          <Chart values={monthlyIncome} width={340} height={120} />
+        </Card>
 
-      <View style={{ marginTop: 16 }}>
-        <Link href="/assistant/1040es" style={{ color: '#2D6AE3', fontSize: 16 }}>Open 1040-ES Assistant →</Link>
+        <View style={{ marginTop: 16, gap: 8 }}>
+          <Link href="/assistant/1040es" style={{ color: '#2D6AE3', fontSize: 16 }}>Open 1040-ES Assistant →</Link>
+          <Link href="/(tabs)/settings" style={{ color: '#2D6AE3', fontSize: 16 }}>Settings →</Link>
+          <Link href="/(tabs)/receipts/capture" style={{ color: '#8CA0B3', fontSize: 16 }}>Scan a Receipt →</Link>
+          <Link href="/(tabs)/mileage/manual" style={{ color: '#8CA0B3', fontSize: 16 }}>Add Mileage Manually →</Link>
+          <Link href="/(tabs)/mileage/route" style={{ color: '#8CA0B3', fontSize: 16 }}>Distance by Addresses →</Link>
+        </View>
       </View>
-    </View>
+    </Screen>
   );
 }

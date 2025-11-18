@@ -31,8 +31,19 @@ export async function getPlatformDrivingRoute(startAddress: string, endAddress: 
       return { distanceMiles: miles };
     }
   }
-  // Android or other: use Google service directly (requires key) else throw.
-  return await getGoogleDrivingRoute(startAddress, endAddress);
+  // Android or other: try Google first; if unavailable, geocode + haversine as fallback.
+  try {
+    return await getGoogleDrivingRoute(startAddress, endAddress);
+  } catch {
+    try {
+      const [start] = await Location.geocodeAsync(startAddress);
+      const [end] = await Location.geocodeAsync(endAddress);
+      if (start && end) {
+        return { distanceMiles: haversineMiles(start.latitude, start.longitude, end.latitude, end.longitude) };
+      }
+    } catch {}
+    throw new Error('Routing unavailable. Add GOOGLE_MAPS_API_KEY or try different addresses.');
+  }
 }
 
 export function decodePolyline(encoded: string) {

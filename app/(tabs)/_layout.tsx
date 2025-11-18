@@ -18,7 +18,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: '#8CA0B3'
       }}
     >
-      {/* Restrict bottom tabs to the core four */}
+      {/* Core four tabs */}
       <Tabs.Screen name="dashboard" options={{ title: 'Dashboard' }} />
       <Tabs.Screen name="finance/index" options={{ title: 'Finance' }} />
       <Tabs.Screen name="receipts/index" options={{ title: 'Receipts' }} />
@@ -33,7 +33,16 @@ export default function TabsLayout() {
           )
         }}
       />
-      {/* Settings is still reachable via internal links (e.g. from Dashboard) but removed from tab bar */}
+
+      {/* Hide all other routes from the tab bar but allow navigation via Links/router */}
+      <Tabs.Screen name="settings" options={{ href: null }} />
+      <Tabs.Screen name="expenses/index" options={{ href: null }} />
+      <Tabs.Screen name="expenses/[id]" options={{ href: null }} />
+      <Tabs.Screen name="income/index" options={{ href: null }} />
+      <Tabs.Screen name="mileage/manual" options={{ href: null }} />
+      <Tabs.Screen name="mileage/route" options={{ href: null }} />
+      <Tabs.Screen name="receipts/capture" options={{ href: null }} />
+      <Tabs.Screen name="receipts/review" options={{ href: null }} />
     </Tabs>
   );
 }

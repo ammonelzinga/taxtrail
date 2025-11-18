@@ -7,12 +7,14 @@ import { useMileageStore } from '@/stores/useMileageStore';
 import { startBackgroundTracking, stopBackgroundTracking } from '@/tasks/background';
 import { getPlatformDrivingRoute, decodePolyline } from '@/services/routing';
 import MapView, { Polyline } from 'react-native-maps';
+import { Link } from 'expo-router';
 
 export default function MileageScreen() {
   const tracking = useMileageStore((s) => s.tracking);
   const start = useMileageStore((s) => s.startTracking);
   const stop = useMileageStore((s) => s.stopTracking);
   const trips = useMileageStore((s) => s.trips);
+  const addTrip = useMileageStore((s) => s.addTrip);
   const [busy, setBusy] = useState(false);
 
   const toggle = async () => {
@@ -79,6 +81,10 @@ export default function MileageScreen() {
       }
     >
       <Text style={{ color: 'white', fontSize: 24, fontWeight: '700', marginBottom: 12 }}>Mileage</Text>
+      <View style={{ flexDirection: 'row', gap: 16, marginBottom: 12 }}>
+        <Link href="/(tabs)/mileage/manual" style={{ color: '#2D6AE3', fontSize: 14 }}>Manual Entry →</Link>
+        <Link href="/(tabs)/mileage/route" style={{ color: '#2D6AE3', fontSize: 14 }}>Distance by Address →</Link>
+      </View>
       <Button title={tracking ? (busy ? 'Stopping…' : 'Stop Automatic Tracking') : busy ? 'Starting…' : 'Start Automatic Tracking'} onPress={toggle} />
       <Text style={{ color: 'white', fontSize: 18, fontWeight: '600', marginTop: 24, marginBottom: 8 }}>Manual Entry</Text>
       <Input placeholder="Miles" keyboardType="decimal-pad" value={manualMiles} onChangeText={setManualMiles} />

@@ -5,10 +5,12 @@ import { Button } from '@/components/Button';
 import { useFinanceStore } from '@/stores/useFinanceStore';
 import { useAuth } from '@/providers/AuthProvider';
 import { saveIncome, saveExpense } from '@/services/sync';
+import { useRouter } from 'expo-router';
 
 type Mode = 'income' | 'expenses';
 
 export default function FinanceScreen() {
+  const router = useRouter();
   const [mode, setMode] = useState<Mode>('income');
   const income = useFinanceStore((s) => s.income);
   const expenses = useFinanceStore((s) => s.expenses);
@@ -37,6 +39,9 @@ export default function FinanceScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: '#0B0F14', padding: 16 }}>
       <Text style={{ color: 'white', fontSize: 24, fontWeight: '700', marginBottom: 12 }}>Finance</Text>
+      <View style={{ marginBottom: 12 }}>
+        <Button variant="secondary" title="View Generated PDFs" onPress={() => router.push('forms')} />
+      </View>
       <View style={{ flexDirection: 'row', marginBottom: 16 }}>
         {(['income', 'expenses'] as Mode[]).map((m) => (
           <Pressable

@@ -4,6 +4,7 @@ import { Button } from '@/components/Button';
 import { listFormFieldsFromModule, fillAllTextFields } from '@/services/pdfDev';
 import { supabase } from '@/services/supabase';
 import { useAuth } from '@/providers/AuthProvider';
+import { uploadFromUri } from '@/services/storage';
 
 type FormAsset = { key: string; label: string; moduleId?: any };
 // Metro requires static require() calls; use literal paths with try/catch per asset.
@@ -16,10 +17,14 @@ try { RECORD_2025 = require('../../assets/Record_EstimatedTaxPayments_2025.pdf')
 let VOUCHER_2025: any | undefined;
 try { VOUCHER_2025 = require('../../assets/1040ES_PaymentVoucher_2025.pdf'); } catch {}
 
+let UNIFIED: any | undefined;
+try { UNIFIED = require('../../assets/form1040esFillable.pdf'); } catch {}
+
 const forms: FormAsset[] = [
   { key: 'worksheet', label: '1040-ES Worksheet (2025)', moduleId: WORKSHEET_2025 },
   { key: 'record', label: 'Record of Estimated Tax Payments (2025)', moduleId: RECORD_2025 },
   { key: 'voucher', label: '1040-ES Payment Voucher (2025)', moduleId: VOUCHER_2025 },
+  { key: 'unified', label: 'Unified 1040-ES (fillable booklet)', moduleId: UNIFIED },
 ];
 
 export default function PdfInspector() {
@@ -49,11 +54,8 @@ export default function PdfInspector() {
         Alert.alert('Preview created', `Saved locally at: ${uri}`);
         return;
       }
-      const resp = await fetch(uri);
-      const blob = (await resp.blob()) as Blob;
       const path = `${user.id}/forms/DEV_${selected.key}_${Date.now()}.pdf`;
-      const { error } = await supabase.storage.from('forms').upload(path, blob, { contentType: 'application/pdf' });
-      if (error) throw error;
+      await uploadFromUri('forms', path, uri, 'application/pdf');
       Alert.alert('Preview uploaded', `Saved to forms bucket at: ${path}`);
     } catch (e: any) {
       Alert.alert('Preview failed', e.message);
@@ -84,7 +86,7 @@ export default function PdfInspector() {
               <Text style={{ color: '#9AA4AE' }}>{item.type}{item.value ? ` • ${item.value}` : ''}</Text>
             </View>
           )}
-          ListEmptyComponent={<Text style={{ color: '#6C7783' }}>No fields loaded yet. Tap "List Fields".</Text>}
+          ListEmptyComponent={<Text style={{ color: '#6C7783' }}>No AcroForm fields found. Many IRS PDFs are non-fillable/XFA. We’ll overlay values when generating.</Text>}
         />
       )}
     </View>

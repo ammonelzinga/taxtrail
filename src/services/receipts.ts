@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { supabase } from '@/services/supabase';
 import Constants from 'expo-constants';
 import { parseImageWithMLKit } from '@/services/ocr';
@@ -28,22 +28,24 @@ export async function pickReceiptImage(): Promise<ImagePicker.ImagePickerAsset |
 export async function uploadReceiptToStorage(userId: string, localUri: string) {
   const fileName = `${userId}/${Date.now()}.jpg`;
   let uploadBody: Blob | ArrayBuffer | Uint8Array;
-
-  try {
-    const response = await fetch(localUri);
-    // Some React Native environments (especially file:// URIs) lack blob(); fall back if unavailable
-    if (typeof response.blob === 'function') {
-      uploadBody = await response.blob();
-    } else if (typeof response.arrayBuffer === 'function') {
-      uploadBody = await response.arrayBuffer();
-    } else {
-      throw new Error('No blob/arrayBuffer support for local file fetch');
+  if (localUri.startsWith('file://')) {
+    const base64 = await FileSystem.readAsStringAsync(localUri, { encoding: 'base64' as any });
+    uploadBody = base64ToUint8Array(base64);
+  } else {
+    try {
+      const response = await fetch(localUri);
+      if (typeof (response as any).blob === 'function') {
+        uploadBody = await (response as any).blob();
+      } else if (typeof response.arrayBuffer === 'function') {
+        uploadBody = await response.arrayBuffer();
+      } else {
+        const base64 = await FileSystem.readAsStringAsync(localUri, { encoding: 'base64' as any });
+        uploadBody = base64ToUint8Array(base64);
+      }
+    } catch {
+      const base64 = await FileSystem.readAsStringAsync(localUri, { encoding: 'base64' as any });
+      uploadBody = base64ToUint8Array(base64);
     }
-  } catch {
-    // Fallback: read base64 and convert to Uint8Array manually
-    const base64 = await FileSystem.readAsStringAsync(localUri, { encoding: FileSystem.EncodingType.Base64 });
-    const binary = base64ToUint8Array(base64);
-    uploadBody = binary;
   }
 
   const { data, error } = await supabase.storage

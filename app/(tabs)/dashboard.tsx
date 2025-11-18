@@ -42,6 +42,8 @@ export default function DashboardScreen() {
 
         <View style={{ marginTop: 16, gap: 8 }}>
           <Link href="/assistant/1040es" style={{ color: '#2D6AE3', fontSize: 16 }}>Open 1040-ES Assistant →</Link>
+          <Link href="/assistant/worksheet" style={{ color: '#2D6AE3', fontSize: 16 }}>2025 Worksheet (Page 8) →</Link>
+          <Link href="/(tabs)/finance/forms" style={{ color: '#2D6AE3', fontSize: 16 }}>View Generated PDFs →</Link>
           <Link href="/(tabs)/settings" style={{ color: '#2D6AE3', fontSize: 16 }}>Settings →</Link>
           <Link href="/(tabs)/receipts/capture" style={{ color: '#8CA0B3', fontSize: 16 }}>Scan a Receipt →</Link>
           <Link href="/(tabs)/mileage/manual" style={{ color: '#8CA0B3', fontSize: 16 }}>Add Mileage Manually →</Link>

@@ -39,6 +39,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="expenses/index" options={{ href: null }} />
       <Tabs.Screen name="expenses/[id]" options={{ href: null }} />
       <Tabs.Screen name="income/index" options={{ href: null }} />
+      <Tabs.Screen name="finance/forms" options={{ href: null }} />
       <Tabs.Screen name="mileage/manual" options={{ href: null }} />
       <Tabs.Screen name="mileage/route" options={{ href: null }} />
       <Tabs.Screen name="receipts/capture" options={{ href: null }} />
